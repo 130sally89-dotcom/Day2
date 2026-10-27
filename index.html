@@ -3,38 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>카운터</title>
+<title>부품 지도</title>
 <style>
-  body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    margin: 0;
-    font-family: sans-serif;
+  * { box-sizing: border-box; }
+  body { font-family: sans-serif; margin: 0; padding: 1.5rem 1rem; background: #f3f4f6; color: #1f2937; }
+  h1 { font-size: 1.3rem; text-align: center; margin: 0 0 0.3rem; }
+  .note { text-align: center; color: #6b7280; font-size: 0.9rem; margin: 0 0 1.5rem; }
+  .wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+  .row { display: flex; align-items: center; gap: 0.8rem; }
+  .row > .part { flex: 1; }
+  .tag {
+    flex: 0 0 auto;
+    width: 5.5rem;
+    text-align: center;
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: bold;
+    padding: 0.3rem 0.5rem;
+    border-radius: 999px;
   }
-  #count {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-  }
-  button {
-    font-size: 1.5rem;
-    padding: 0.5rem 1.5rem;
-    cursor: pointer;
-  }
+  .tag::before { content: "▶ "; }
+  .part { border: 2px dashed #2563eb; border-radius: 8px; padding: 0.6rem; background: #fff; }
+  .header { background: #2563eb; color: #fff; text-align: center; border-radius: 6px; padding: 0.8rem; }
+  .header h2 { margin: 0; font-size: 1.2rem; }
+  .header p { margin: 0.2rem 0 0; font-size: 0.85rem; opacity: 0.9; }
+  .tabs { display: flex; gap: 1.2rem; justify-content: center; }
+  .tabs span { padding: 0.3rem 0.2rem; color: #374151; }
+  .tabs .active { color: #2563eb; border-bottom: 3px solid #2563eb; }
+  .card h3 { margin: 0 0 0.2rem; }
+  .card p { margin: 0 0 0.5rem; color: #6b7280; font-size: 0.9rem; }
+  .card .list { border: 2px dashed #16a34a; border-radius: 6px; padding: 0.4rem 0.6rem 0.4rem 0.8rem; background: #f0fdf4; }
+  .card ol { margin: 0; padding-left: 1.4rem; line-height: 1.7; font-size: 0.9rem; }
+  .inner { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.4rem; }
+  .inner .list { flex: 1; }
+  .tag.green { background: #16a34a; }
+  .footer { background: #1f2937; color: #d1d5db; text-align: center; font-size: 0.85rem; border-radius: 6px; padding: 0.7rem; }
+  .missing { margin-top: 1rem; background: #fff; border-radius: 8px; padding: 1rem 1.2rem; }
+  .missing h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #e5e7eb; padding: 0.4rem 0.8rem; text-align: left; font-size: 0.9rem; }
+  .yes { color: #16a34a; font-weight: bold; }
+  .no { color: #9ca3af; }
 </style>
 </head>
 <body>
-  <div id="count">0</div>
-  <button id="btn">+2</button>
-  <script>
-    let count = 0;
-    const countEl = document.getElementById('count');
-    document.getElementById('btn').addEventListener('click', () => {
-      count+= 2;
-      countEl.textContent = count;
-    });
-  </script>
+  <div class="wrap">
+    <div>
+      <h1>🧩 index.html 화면 부품 지도</h1>
+      <p class="note">index.html 구조를 줄여서 보여 주고, 부품마다 이름표를 붙였습니다.</p>
+    </div>
+
+    <div class="row">
+      <div class="part header">
+        <h2>🍊 내 취향 카드</h2>
+        <p>나를 소개하는 작은 카드</p>
+      </div>
+      <span class="tag">헤더</span>
+    </div>
+
+    <div class="row">
+      <div class="part tabs">
+        <span class="active">홈</span><span>내 취향</span><span>갤러리</span><span>연락처</span>
+      </div>
+      <span class="tag">탭</span>
+    </div>
+
+    <div class="row">
+      <div class="part card">
+        <h3>🎓 제주대학교 홍보</h3>
+        <p>바다와 한라산이 품은 배움의 터전</p>
+        <div class="inner">
+          <div class="list">
+            <ol>
+              <li>푸른 바다와 한라산이 함께하는 곳, 제주대학교입니다.</li>
+              <li>제주의 자연 속에서 꿈을 키우는 국립대학입니다.</li>
+              <li>… (100줄 중 일부)</li>
+            </ol>
+          </div>
+          <span class="tag green">목록</span>
+        </div>
+      </div>
+      <span class="tag">카드</span>
+    </div>
+
+    <div class="row">
+      <div class="part footer">© 2026 내 취향 카드 · 만든 사람: 이승우</div>
+      <span class="tag" style="background:#1f2937">푸터</span>
+    </div>
+
+    <div class="missing">
+      <h2>요청한 6가지 부품 점검</h2>
+      <table>
+        <tr><th>부품</th><th>index.html에 있나요?</th></tr>
+        <tr><td>헤더</td><td class="yes">있음 (상단 파란 영역)</td></tr>
+        <tr><td>카드</td><td class="yes">있음 (본문의 흰색 카드)</td></tr>
+        <tr><td>버튼</td><td class="no">없음 (카운터를 지우면서 사라짐)</td></tr>
+        <tr><td>입력창</td><td class="no">없음</td></tr>
+        <tr><td>탭</td><td class="yes">있음 (홈·내 취향·갤러리·연락처 메뉴)</td></tr>
+        <tr><td>목록</td><td class="yes">있음 (홍보 문구 100줄 번호 목록)</td></tr>
+      </table>
+    </div>
+  </div>
 </body>
 </html>
