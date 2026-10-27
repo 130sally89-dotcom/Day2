@@ -1,5 +1,11 @@
 // Vercel 서버리스 함수: 환경변수 GEMINI_API_KEY 로 Gemini를 호출합니다. 키는 브라우저에 노출되지 않습니다.
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+// 앞 모델이 혼잡(429/500/503)하거나 느리면 다음 모델로 넘어갑니다. 환경변수 GEMINI_MODEL 은 맨 앞에 추가됩니다.
+const MODELS = [
+  process.env.GEMINI_MODEL,
+  "gemini-3.8-flash",
+  "gemini-flash-latest",
+  "gemini-flash-lite-latest",
+].filter((m, i, a) => m && a.indexOf(m) === i);
 
 const SYSTEM_PROMPT =
   "당신은 제주도 특산물(감귤, 한라봉, 흑돼지, 갈치, 옥돔, 녹차, 전복 등)을 소개하는 친절한 한국어 에이전트입니다. " +
@@ -27,25 +33,33 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // 일시적 과부하(429/500/503)는 잠깐 쉬었다가 최대 3번까지 다시 시도합니다.
-    let upstream, data;
-    for (let attempt = 0; attempt < 2; attempt++) {
-      // 한 번의 호출이 15초를 넘으면 끊고 (무한 대기 방지)
-      upstream = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-            contents,
-          }),
-          signal: AbortSignal.timeout(15000),
-        }
-      );
+    let upstream, data, timedOut = false;
+    for (const model of MODELS.slice(0, 3)) {
+      try {
+        // 한 번의 호출이 12초를 넘으면 끊고 다음 모델로 (무한 대기 방지)
+        upstream = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+              contents,
+            }),
+            signal: AbortSignal.timeout(12000),
+          }
+        );
+      } catch (e) {
+        if (e && (e.name === "TimeoutError" || e.name === "AbortError")) { timedOut = true; continue; }
+        throw e;
+      }
+      timedOut = false;
       data = await upstream.json();
-      if (![429, 500, 503].includes(upstream.status)) break;
-      if (attempt < 1) await new Promise(r => setTimeout(r, 1000));
+      // 혼잡·모델 없음(404)이면 다음 모델 시도, 그 외에는 결과 그대로 사용
+      if (![404, 429, 500, 503].includes(upstream.status)) break;
+    }
+    if (!upstream || timedOut) {
+      return res.status(504).json({ error: "Gemini 응답이 너무 오래 걸려요. 잠시 후 다시 시도해 주세요." });
     }
     if (!upstream.ok) {
       const msg = (data.error && data.error.message) || `Gemini 오류 ${upstream.status}`;
