@@ -61,17 +61,15 @@
     <input id="text" placeholder="메시지를 입력하세요" autocomplete="off">
     <button>보내기</button>
   </form>
-  <div class="note">※ 지금 답변은 미리 정해 둔 가짜 답이에요.</div>
+  <div class="note">※ AI(Gemini)가 만든 답변이라 틀릴 수 있어요.</div>
 
   <script>
-    const replies = [
-      "안녕하세요! 제주 특산물을 알아보는 에이전트예요 🍊 감귤, 흑돼지, 갈치 중 어떤 게 궁금하세요?",
-      "겨울이라면 노지 감귤을 추천해요! 달콤하고 비타민도 풍부해서 간식으로 딱이에요 🍊",
-      "아직 공부 중이에요! 5일차에 진짜로 알아볼게요."
-    ];
-    let turn = 0;
+    const history = [];   // Gemini에 보낼 대화 기록
     const chat = document.getElementById("chat");
     const input = document.getElementById("text");
+    const sendBtn = document.querySelector("#form button");
+
+    addBubble("안녕하세요! 제주 특산물을 알아보는 에이전트예요 🍊 무엇이 궁금하세요?", "agent");
 
     function addBubble(text, who) {
       const div = document.createElement("div");
@@ -81,15 +79,40 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    document.getElementById("form").addEventListener("submit", e => {
+    document.getElementById("form").addEventListener("submit", async e => {
       e.preventDefault();
       const msg = input.value.trim();
-      if (!msg) return;
+      if (!msg || sendBtn.disabled) return;
       addBubble(msg, "me");
+      history.push({ role: "user", text: msg });
       input.value = "";
-      const reply = replies[turn % replies.length];
-      turn++;
-      setTimeout(() => addBubble(reply, "agent"), 1000);
+      sendBtn.disabled = true;
+
+      const wait = document.createElement("div");
+      wait.className = "bubble agent";
+      wait.textContent = "답변 작성 중...";
+      chat.appendChild(wait);
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: history })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "오류 " + res.status);
+        wait.remove();
+        addBubble(data.reply, "agent");
+        history.push({ role: "model", text: data.reply });
+      } catch (err) {
+        wait.remove();
+        history.pop();   // 실패한 질문은 기록에서 제외
+        addBubble("⚠️ " + err.message, "agent");
+      } finally {
+        sendBtn.disabled = false;
+        input.focus();
+      }
     });
   </script>
 </body>
