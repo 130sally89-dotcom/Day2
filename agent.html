@@ -110,7 +110,10 @@
         wait.remove();
         history.pop();   // 실패한 질문은 기록에서 제외
         const slow = err.name === "TimeoutError" || err.name === "AbortError";
-        addBubble("⚠️ " + (slow ? "응답이 너무 오래 걸려요. 잠시 후 다시 시도해 주세요." : err.message), "agent");
+        const offline = err instanceof TypeError;   // "Failed to fetch" = 서버에 연결 자체가 안 됨
+        addBubble("⚠️ " + (slow ? "응답이 너무 오래 걸려요. 잠시 후 다시 시도해 주세요."
+          : offline ? "서버(/api/chat)에 연결하지 못했어요. 파일을 직접 연 것이 아니라 Vercel 배포 주소로 접속했는지 확인해 주세요."
+          : err.message), "agent");
       } finally {
         sendBtn.disabled = false;
         input.focus();

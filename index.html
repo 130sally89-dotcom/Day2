@@ -142,33 +142,66 @@
     .layout { grid-template-columns: 1fr; }
     aside { grid-column: 1; grid-row: auto; }
   }
-  .tag::before { content: "▶ "; }
-  .part { border: 2px dashed #2563eb; border-radius: 8px; padding: 0.6rem; background: #fff; }
-  .header { background: #2563eb; color: #fff; text-align: center; border-radius: 6px; padding: 0.8rem; }
-  .header h2 { margin: 0; font-size: 1.2rem; }
-  .header p { margin: 0.2rem 0 0; font-size: 0.85rem; opacity: 0.9; }
-  .tabs { display: flex; gap: 1.2rem; justify-content: center; }
-  .tabs span { padding: 0.3rem 0.2rem; color: #374151; }
-  .tabs .active { color: #2563eb; border-bottom: 3px solid #2563eb; }
-  .card h3 { margin: 0 0 0.2rem; }
-  .card p { margin: 0 0 0.5rem; color: #6b7280; font-size: 0.9rem; }
-  .card .list { border: 2px dashed #16a34a; border-radius: 6px; padding: 0.4rem 0.6rem 0.4rem 0.8rem; background: #f0fdf4; }
-  .card ol { margin: 0; padding-left: 1.4rem; line-height: 1.7; font-size: 0.9rem; }
-  .inner { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.4rem; }
-  .inner .list { flex: 1; }
-  .tag.green { background: #16a34a; }
-  .footer { background: #1f2937; color: #d1d5db; text-align: center; font-size: 0.85rem; border-radius: 6px; padding: 0.7rem; }
-  .missing { margin-top: 1rem; background: #fff; border-radius: 8px; padding: 1rem 1.2rem; }
-  .missing h2 { font-size: 1rem; margin: 0 0 0.5rem; }
-  table { border-collapse: collapse; width: 100%; }
-  th, td { border: 1px solid #e5e7eb; padding: 0.4rem 0.8rem; text-align: left; font-size: 0.9rem; }
-  .yes { color: #16a34a; font-weight: bold; }
-  .no { color: #9ca3af; }
+  .big-round {
+    width: 200px;
+    height: 200px;
+    margin: 1.5rem auto 0;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: bold;
+    line-height: 1.3;
+    background: radial-gradient(circle at 30% 30%, #4f7be8, #1e3a8a);
+    box-shadow: 0 8px 20px rgba(30, 58, 138, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .big-round .ico { font-size: 3rem; line-height: 1; }
+  .big-round small { font-size: 0.85rem; font-weight: normal; opacity: 0.9; }
+  .big-round:hover { transform: scale(1.05); box-shadow: 0 12px 26px rgba(30, 58, 138, 0.5); }
+  .big-round:active { transform: scale(0.97); }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  section, article, aside { scroll-margin-top: 3.5rem; }
+  img { max-width: 100%; }
+  button { touch-action: manipulation; }
+
+  /* 모바일 (폰) */
+  @media (max-width: 760px) {
+    header { padding: 1.4rem 1rem; }
+    header h1 { font-size: 1.6rem; }
+    header p { font-size: 0.95rem; }
+    /* 메뉴가 여러 줄로 쌓이지 않고 한 줄로 가로 스크롤 */
+    nav ul { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    nav ul::-webkit-scrollbar { display: none; }
+    nav a { padding: 0.8rem 1rem; white-space: nowrap; }
+    .layout { margin: 1rem auto; padding: 0 0.7rem; gap: 0.8rem; }
+    section, article, aside { padding: 1.1rem; }
+    .products { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+    .product { padding: 0.8rem 0.4rem; }
+    .search button, #more { min-height: 44px; }
+    .search input { min-width: 0; min-height: 44px; }
+    .slider .nav { padding: 0.7rem 1rem; }
+    #info { overflow-wrap: anywhere; }
+    .thumbs { grid-template-columns: repeat(5, 1fr); gap: 0.3rem; }
+    /* 채팅창은 화면 아래쪽을 가득 채움 */
+    #chat-btn { right: 0.8rem; bottom: calc(0.8rem + env(safe-area-inset-bottom)); padding: 0.8rem 1.1rem; }
+    #chat-panel {
+      right: 0.5rem; left: 0.5rem; width: auto; max-width: none;
+      bottom: calc(4.3rem + env(safe-area-inset-bottom));
+      height: calc(100dvh - 8rem); max-height: none;
+    }
+  }
 </style>
 </head>
 <body>
 
-  <header>
+  <header id="home">
     <h1>🍊 제주 특산물 장터</h1>
     <p>바다와 한라산이 키운 제주의 맛을 집으로 🌊</p>
   </header>
@@ -183,6 +216,11 @@
       <li><a href="#contact">📞 문의</a></li>
     </ul>
   </nav>
+
+  <a class="big-round" id="go-reactive" href="reactive.html" aria-label="반응형 메뉴 페이지 열기">
+    <span class="ico">🧭</span>
+    <span>카테고리<br>열기</span>
+  </a>
 
   <div class="layout">
 

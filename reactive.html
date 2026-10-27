@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>카테고리</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Malgun Gothic", sans-serif;
+    background: #f4f6fb;
+    color: #1f2937;
+    line-height: 1.6;
+  }
+  a { color: inherit; }
+
+  /* 상단 바 */
+  .topbar { position: sticky; top: 0; z-index: 20; background: #1e3a8a; color: #fff; }
+  .bar {
+    max-width: 1000px; margin: 0 auto; padding: 0 1rem; min-height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-size: 1.2rem; font-weight: bold; text-decoration: none; color: #fff; }
+
+  .menu { list-style: none; margin: 0; padding: 0; display: flex; gap: 0.3rem; }
+  .menu a {
+    display: block; padding: 0.7rem 1rem; color: #fff; text-decoration: none;
+    border-radius: 8px; font-weight: bold;
+  }
+  .menu a:hover, .menu a.active { background: rgba(255, 255, 255, 0.2); }
+
+  .burger {
+    display: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 8px;
+    background: transparent; cursor: pointer; position: relative;
+  }
+  .burger span {
+    position: absolute; left: 10px; right: 10px; height: 3px; border-radius: 2px; background: #fff;
+    transition: transform 0.25s, opacity 0.2s, top 0.25s;
+  }
+  .burger span:nth-child(1) { top: 13px; }
+  .burger span:nth-child(2) { top: 20px; }
+  .burger span:nth-child(3) { top: 27px; }
+  .burger.open span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+  .burger.open span:nth-child(2) { opacity: 0; }
+  .burger.open span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+
+  @media (max-width: 760px) {
+    .burger { display: block; }
+    .menu {
+      display: none; flex-direction: column; gap: 0;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: #1e3a8a; padding: 0.3rem 0.7rem 0.8rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    }
+    .menu.open { display: flex; }
+    .menu a { padding: 0.9rem 0.8rem; }
+  }
+
+  /* 본문 */
+  main { max-width: 1000px; margin: 0 auto; padding: 1.5rem 1rem 3rem; min-height: 70vh; }
+  .intro { text-align: center; margin-bottom: 1.5rem; }
+  .intro h1 { margin: 0 0 0.3rem; font-size: 1.8rem; }
+  .intro p { margin: 0; color: #6b7280; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.7rem 1.2rem; min-height: 44px; border: 0; border-radius: 999px;
+    background: #1e3a8a; color: #fff; font: inherit; font-weight: bold;
+    text-decoration: none; cursor: pointer;
+  }
+  .btn:hover { background: #1b3377; }
+  .btn.ghost { background: #fff; color: #1e3a8a; border: 2px solid #1e3a8a; }
+  .btn.ghost:hover { background: #eef2ff; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.2rem; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+  .card {
+    display: block; width: 100%; text-align: left; font: inherit; color: inherit;
+    background: #fff; border: 0; border-radius: 14px; padding: 1.3rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07); text-decoration: none; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12); }
+  .card h2 { margin: 0 0 0.3rem; font-size: 1.3rem; color: #1e3a8a; }
+  .card p { margin: 0 0 0.6rem; color: #6b7280; font-size: 0.95rem; }
+  .card .more { color: #1e3a8a; font-weight: bold; font-size: 0.95rem; }
+
+  .panel { background: #fff; border-radius: 14px; padding: 1.5rem; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07); }
+  .panel h1 { margin: 0 0 0.3rem; font-size: 1.6rem; color: #1e3a8a; }
+  .panel .lead { margin: 0 0 1rem; color: #6b7280; }
+  .panel h3 { margin: 1.2rem 0 0.3rem; }
+  .panel ul, .panel ol { margin: 0.3rem 0; padding-left: 1.3rem; }
+  .panel li { margin: 0.25rem 0; }
+  .note { margin-top: 1.2rem; padding: 0.7rem 0.9rem; background: #fff7e6; border-radius: 8px; font-size: 0.9rem; color: #7a5200; }
+
+  .items { display: grid; gap: 0.7rem; }
+  .items .card { padding: 1rem 1.2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .items .card h2 { margin: 0; font-size: 1.1rem; }
+  .items .card p { margin: 0.1rem 0 0; }
+  .arrow { color: #1e3a8a; font-weight: bold; font-size: 1.3rem; }
+
+  footer { text-align: center; color: #9ca3af; font-size: 0.85rem; padding: 1.5rem 1rem; }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="bar">
+      <a class="logo" href="#/">🧭 카테고리</a>
+
+      <button class="burger" id="burger" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav>
+        <ul class="menu" id="menu"></ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="view"></main>
+
+  <footer>© 2026 카테고리 예제</footer>
+
+  <script>
+    // 모든 화면 내용은 여기 한 곳에 있습니다. 버튼은 전부 이 데이터로 만들어져 누르면 해당 화면이 열립니다.
+    const CATS = {
+      food: {
+        icon: "🍜", name: "음식", desc: "맛집을 고르고 집에서 만들어 보세요.",
+        items: [
+          { title: "맛집 고르는 법", desc: "실패 없는 식당 고르기",
+            lead: "처음 가는 동네에서 식당을 고를 때 확인하면 좋은 기준입니다.",
+            list: ["최근 리뷰의 날짜와 내용을 함께 봅니다.", "대표 메뉴가 1~2개로 분명한 곳이 대체로 안정적입니다.", "영업시간과 쉬는 날을 미리 확인합니다.", "웨이팅이 있으면 예약이나 포장이 되는지 물어봅니다."] },
+          { title: "간단 레시피", desc: "계란볶음밥 만들기",
+            lead: "재료가 적어도 10분이면 만드는 계란볶음밥입니다.",
+            steps: ["팬에 기름을 두르고 잘게 썬 파를 볶아 향을 냅니다.", "계란 2개를 풀어 넣고 젓가락으로 저어 스크램블을 만듭니다.", "찬밥 1공기를 넣고 덩어리를 풀며 볶습니다.", "소금과 간장 약간으로 간하고, 참기름을 둘러 마무리합니다."] },
+          { title: "지역 특산물", desc: "제주 특산물 둘러보기",
+            lead: "제주 감귤, 한라봉, 흑돼지, 갈치 같은 특산물은 제철 시기에 맛이 가장 좋습니다.",
+            list: ["감귤은 늦가을부터 겨울에 많이 나옵니다.", "한라봉은 늦겨울부터 봄까지가 제철입니다.", "해산물은 계절마다 잘 나는 종류가 다릅니다."],
+            link: { href: "index.html", text: "🍊 제주 특산물 장터 보러 가기" } }
+        ]
+      },
+      furniture: {
+        icon: "🛋️", name: "가구", desc: "우리 집에 어울리는 가구를 골라 보세요.",
+        items: [
+          { title: "침대 · 소파", desc: "크기와 매트리스 고르기",
+            lead: "오래 쓰는 가구라 크기와 사용감을 먼저 따져 봅니다.",
+            list: ["방 크기에서 문이 열리는 공간까지 빼고 치수를 잽니다.", "매트리스는 누워 보고 허리가 뜨지 않는지 확인합니다.", "소파는 앉은 높이와 등받이 깊이를 봅니다.", "집까지 들어오는 현관과 엘리베이터 크기도 확인합니다."] },
+          { title: "책상 · 의자", desc: "자세가 편한 작업 공간",
+            lead: "하루 몇 시간씩 앉는 자리는 높이 맞춤이 가장 중요합니다.",
+            list: ["앉았을 때 팔꿈치가 책상과 비슷한 높이가 되도록 합니다.", "발이 바닥에 닿고 무릎이 자연스럽게 굽혀져야 합니다.", "모니터 상단은 눈높이와 같거나 약간 낮게 둡니다.", "한 시간에 한 번은 일어나 몸을 풉니다."] },
+          { title: "수납 · 인테리어", desc: "좁은 집을 넓어 보이게",
+            lead: "수납을 늘리면 방이 더 넓어 보입니다.",
+            list: ["바닥에 두는 물건을 줄이고 벽면 수납을 활용합니다.", "밝은 색 가구는 공간을 더 넓어 보이게 합니다.", "한 가지 색 계열로 맞추면 정돈된 느낌이 납니다.", "버리는 기준을 정해 1년 안 쓴 물건부터 정리합니다."] }
+        ]
+      },
+      estate: {
+        icon: "🏠", name: "부동산", desc: "집을 알아볼 때 알아두면 좋은 기본 지식입니다.",
+        items: [
+          { title: "매매 · 전세 · 월세", desc: "세 가지 계약 방식 비교",
+            lead: "계약 방식에 따라 목돈과 월 부담이 달라집니다.",
+            list: ["매매: 집을 사서 소유합니다.", "전세: 큰 보증금을 맡기고 월세 없이 삽니다.", "월세: 보증금과 매달 임대료를 냅니다.", "내 자금 사정과 거주 기간에 맞는 방식을 고릅니다."] },
+          { title: "시세 확인하는 법", desc: "가격을 비교하는 방법",
+            lead: "한 곳의 가격만 보지 말고 여러 자료를 비교합니다.",
+            list: ["국토교통부 실거래가 공개 자료로 실제 거래 가격을 봅니다.", "같은 단지, 비슷한 면적과 층을 비교합니다.", "호가(부르는 값)와 실거래가는 다를 수 있습니다.", "여러 중개사무소의 설명을 들어 봅니다."] },
+          { title: "계약 전 확인", desc: "계약할 때 꼭 볼 것",
+            lead: "계약 전에 서류와 현장을 꼼꼼히 확인합니다.",
+            list: ["등기부등본으로 소유자와 근저당 등 권리관계를 확인합니다.", "집주인 본인인지 신분증으로 확인합니다.", "계약서 특약 사항은 꼼꼼히 읽고 문서로 남깁니다.", "전입신고와 확정일자는 가능한 빨리 받습니다."] }
+        ],
+        note: "일반적인 안내이며 법률·세무 조언이 아닙니다. 실제 계약은 전문가와 상담하세요."
+      },
+      stock: {
+        icon: "📈", name: "주식", desc: "시장을 이해하는 데 필요한 기본 용어와 관점입니다.",
+        items: [
+          { title: "시장 보는 법", desc: "지수와 뉴스 읽기",
+            lead: "시장 전체의 흐름은 지수로 가늠합니다.",
+            list: ["코스피와 코스닥은 한국 주식시장의 대표 지수입니다.", "하루 등락보다 긴 기간의 흐름을 봅니다.", "뉴스는 사실과 전망을 구분해서 읽습니다.", "한 곳의 의견만 믿지 말고 여러 출처를 비교합니다."] },
+          { title: "관심 종목 정리", desc: "공부할 종목 관리하기",
+            lead: "종목을 고르기 전에 그 회사가 무엇으로 돈을 버는지부터 이해합니다.",
+            list: ["회사의 주요 사업과 매출 구조를 확인합니다.", "최근 몇 년간 실적이 어떻게 변했는지 봅니다.", "관심 종목은 목록으로 적어 두고 꾸준히 지켜봅니다.", "한 종목에 몰아서 투자하지 않는 것이 기본입니다."] },
+          { title: "투자 용어 사전", desc: "자주 나오는 용어",
+            lead: "처음 접하는 용어를 간단히 정리했습니다.",
+            list: ["PER: 주가가 이익의 몇 배인지 보여 주는 지표입니다.", "배당: 회사가 이익 일부를 주주에게 나눠 주는 것입니다.", "시가총액: 주가 × 발행 주식 수로 회사의 몸집을 나타냅니다.", "분산투자: 여러 자산에 나눠 위험을 줄이는 방법입니다."] }
+        ],
+        note: "투자 권유가 아닌 일반 교육용 설명입니다. 투자 판단과 책임은 본인에게 있으며 원금 손실이 생길 수 있습니다."
+      },
+      map: {
+        icon: "🗺️", name: "지도", desc: "지도를 더 잘 쓰는 방법을 알아보세요.",
+        items: [
+          { title: "길 찾기 팁", desc: "이동 방법 고르기",
+            lead: "출발지와 도착지를 넣고 이동 수단을 비교해 봅니다.",
+            list: ["도보, 대중교통, 자동차를 각각 비교해 시간을 봅니다.", "출발 시각을 바꿔 보면 막히는 시간대를 알 수 있습니다.", "환승이 적은 경로가 편할 때가 많습니다.", "처음 가는 곳은 입구 위치까지 확대해서 확인합니다."] },
+          { title: "주변 검색", desc: "근처 장소 찾기",
+            lead: "내 위치 주변의 식당, 카페, 편의시설을 찾을 때 씁니다.",
+            list: ["'약국', '주차장'처럼 찾는 장소 이름으로 검색합니다.", "영업 중인 곳만 보도록 필터를 활용합니다.", "거리와 리뷰를 함께 보고 고릅니다.", "위치 권한은 필요할 때만 허용합니다."] },
+          { title: "장소 저장하기", desc: "나만의 장소 목록 만들기",
+            lead: "자주 가는 곳이나 가고 싶은 곳을 목록으로 모아 둡니다.",
+            list: ["지도 앱의 '저장' 또는 '즐겨찾기' 기능을 사용합니다.", "집, 회사, 맛집처럼 목록을 나누어 정리합니다.", "여행 전에 가고 싶은 곳을 미리 저장해 두면 편합니다.", "가족과 공유할 수 있는 목록 기능도 있습니다."] }
+        ]
+      }
+    };
+
+    const view = document.getElementById("view");
+    const menu = document.getElementById("menu");
+    const burger = document.getElementById("burger");
+
+    // 상단 메뉴 (카테고리 5개)
+    menu.innerHTML = Object.entries(CATS)
+      .map(([id, c]) => `<li><a href="#/${id}" data-id="${id}">${c.icon} ${c.name}</a></li>`).join("");
+
+    function home() {
+      document.title = "카테고리";
+      view.innerHTML = `
+        <div class="intro">
+          <h1>무엇을 찾으세요?</h1>
+          <p>카테고리를 누르면 그 내용만 볼 수 있어요.</p>
+        </div>
+        <div class="toolbar"><a class="btn ghost" href="index.html">🏠 메인 페이지로</a></div>
+        <div class="grid">
+          ${Object.entries(CATS).map(([id, c]) => `
+            <a class="card" href="#/${id}">
+              <h2>${c.icon} ${c.name}</h2>
+              <p>${c.desc}</p>
+              <span class="more">보기 →</span>
+            </a>`).join("")}
+        </div>`;
+    }
+
+    function category(id) {
+      const c = CATS[id];
+      document.title = c.name + " · 카테고리";
+      view.innerHTML = `
+        <div class="toolbar">
+          <a class="btn ghost" href="#/">← 전체 카테고리</a>
+        </div>
+        <div class="panel">
+          <h1>${c.icon} ${c.name}</h1>
+          <p class="lead">${c.desc}</p>
+          <div class="items">
+            ${c.items.map((it, i) => `
+              <a class="card" href="#/${id}/${i}">
+                <div><h2>${it.title}</h2><p>${it.desc}</p></div>
+                <span class="arrow">›</span>
+              </a>`).join("")}
+          </div>
+          ${c.note ? `<div class="note">${c.note}</div>` : ""}
+        </div>`;
+    }
+
+    function item(id, i) {
+      const c = CATS[id], it = c.items[i];
+      document.title = it.title + " · " + c.name;
+      const body = it.steps
+        ? `<h3>만드는 순서</h3><ol>${it.steps.map(s => `<li>${s}</li>`).join("")}</ol>`
+        : `<ul>${it.list.map(s => `<li>${s}</li>`).join("")}</ul>`;
+      view.innerHTML = `
+        <div class="toolbar">
+          <a class="btn" href="#/${id}">← ${c.name}</a>
+          <a class="btn ghost" href="#/">전체 카테고리</a>
+        </div>
+        <div class="panel">
+          <h1>${it.title}</h1>
+          <p class="lead">${it.lead}</p>
+          ${body}
+          ${it.link ? `<p><a class="btn" href="${it.link.href}">${it.link.text}</a></p>` : ""}
+          ${c.note ? `<div class="note">${c.note}</div>` : ""}
+        </div>`;
+    }
+
+    function render() {
+      const [, id, idx] = location.hash.split("/");   // "#/food/1" → ["#", "food", "1"]
+      let active = "";
+      if (id && CATS[id] && idx !== undefined && CATS[id].items[+idx]) { item(id, +idx); active = id; }
+      else if (id && CATS[id]) { category(id); active = id; }
+      else home();
+      menu.querySelectorAll("a").forEach(a => a.classList.toggle("active", a.dataset.id === active));
+      setOpen(false);
+      window.scrollTo(0, 0);
+    }
+
+    function setOpen(open) {
+      menu.classList.toggle("open", open);
+      burger.classList.toggle("open", open);
+      burger.setAttribute("aria-expanded", open);
+      burger.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
+    }
+
+    burger.addEventListener("click", () => setOpen(!menu.classList.contains("open")));
+    document.addEventListener("click", e => { if (!e.target.closest(".topbar")) setOpen(false); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") setOpen(false); });
+    window.addEventListener("resize", () => { if (innerWidth > 760) setOpen(false); });
+    window.addEventListener("hashchange", render);
+    render();
+  </script>
+</body>
+</html>
