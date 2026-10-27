@@ -3,25 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>부품 지도</title>
+<title>제주 특산물 장터</title>
 <style>
   * { box-sizing: border-box; }
-  body { font-family: sans-serif; margin: 0; padding: 1.5rem 1rem; background: #f3f4f6; color: #1f2937; }
-  h1 { font-size: 1.3rem; text-align: center; margin: 0 0 0.3rem; }
-  .note { text-align: center; color: #6b7280; font-size: 0.9rem; margin: 0 0 1.5rem; }
-  .wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
-  .row { display: flex; align-items: center; gap: 0.8rem; }
-  .row > .part { flex: 1; }
-  .tag {
-    flex: 0 0 auto;
-    width: 5.5rem;
-    text-align: center;
-    background: #2563eb;
+  body {
+    margin: 0;
+    font-family: "Malgun Gothic", sans-serif;
+    background: #fff8ee;
+    color: #2d2a26;
+    line-height: 1.6;
+  }
+  header {
+    background: linear-gradient(135deg, #ff9f1c, #ff6f3c);
     color: #fff;
-    font-size: 0.9rem;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  header h1 { margin: 0; font-size: 2.2rem; }
+  header p { margin: 0.4rem 0 0; font-size: 1.05rem; }
+  nav {
+    background: #2f7d4f;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  nav a {
+    display: block;
+    padding: 0.8rem 1.3rem;
+    color: #fff;
+    text-decoration: none;
     font-weight: bold;
-    padding: 0.3rem 0.5rem;
+  }
+  nav a:hover { background: #256a41; }
+  .layout {
+    max-width: 1000px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1rem;
+  }
+  section, article, aside {
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  }
+  section { grid-column: 1; }
+  article { grid-column: 1; }
+  aside { grid-column: 2; grid-row: 1 / span 2; align-self: start; }
+  h2 { margin-top: 0; color: #e8590c; }
+  aside h2 { color: #2f7d4f; font-size: 1.2rem; }
+  .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.8rem; }
+  .product {
+    border: 1px solid #ffe0b8;
+    border-radius: 12px;
+    padding: 1rem 0.6rem;
+    text-align: center;
+    background: #fffaf2;
+  }
+  .product .emoji { font-size: 2.5rem; }
+  .product h3 { margin: 0.3rem 0; font-size: 1.05rem; }
+  .product p { margin: 0; font-size: 0.88rem; color: #6b625a; }
+  article h3 { color: #2f7d4f; margin-bottom: 0.2rem; }
+  article ul { margin-top: 0.3rem; padding-left: 1.2rem; }
+  aside ul { list-style: none; margin: 0 0 1.2rem; padding: 0; }
+  aside li { padding: 0.45rem 0; border-bottom: 1px dashed #e5d5bd; font-size: 0.95rem; }
+  .badge {
+    display: inline-block;
+    background: #ffe8cc;
+    color: #d9480f;
+    padding: 0.1rem 0.6rem;
     border-radius: 999px;
+    font-size: 0.8rem;
+    margin-right: 0.3rem;
+  }
+  footer {
+    background: #3b2f2f;
+    color: #e8dccb;
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  footer p { margin: 0.2rem 0; }
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { grid-column: 1; grid-row: auto; }
   }
   .tag::before { content: "▶ "; }
   .part { border: 2px dashed #2563eb; border-radius: 8px; padding: 0.6rem; background: #fff; }
@@ -48,62 +123,91 @@
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div>
-      <h1>🧩 index.html 화면 부품 지도</h1>
-      <p class="note">index.html 구조를 줄여서 보여 주고, 부품마다 이름표를 붙였습니다.</p>
-    </div>
 
-    <div class="row">
-      <div class="part header">
-        <h2>🍊 내 취향 카드</h2>
-        <p>나를 소개하는 작은 카드</p>
+  <header>
+    <h1>🍊 제주 특산물 장터</h1>
+    <p>바다와 한라산이 키운 제주의 맛을 집으로 🌊</p>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#home">🏠 홈</a></li>
+      <li><a href="#products">🍊 특산물</a></li>
+      <li><a href="#story">📖 이야기</a></li>
+      <li><a href="#season">📅 제철 달력</a></li>
+      <li><a href="#contact">📞 문의</a></li>
+    </ul>
+  </nav>
+
+  <div class="layout">
+
+    <section id="products">
+      <h2>🛍️ 대표 특산물</h2>
+      <p>제주의 청정 자연에서 자란 먹거리를 만나 보세요.</p>
+      <div class="products">
+        <div class="product"><div class="emoji">🍊</div><h3>감귤</h3><p>새콤달콤한 제주의 대표 과일</p></div>
+        <div class="product"><div class="emoji">🍈</div><h3>한라봉</h3><p>향긋하고 달콤한 만감류</p></div>
+        <div class="product"><div class="emoji">🐖</div><h3>흑돼지</h3><p>쫄깃하고 고소한 풍미</p></div>
+        <div class="product"><div class="emoji">🐟</div><h3>갈치</h3><p>은빛으로 빛나는 제주 바다의 맛</p></div>
+        <div class="product"><div class="emoji">🐠</div><h3>옥돔</h3><p>담백하게 구워 먹는 생선</p></div>
+        <div class="product"><div class="emoji">🍵</div><h3>녹차</h3><p>한라산 기슭의 향긋한 차</p></div>
+        <div class="product"><div class="emoji">🦪</div><h3>전복</h3><p>바다의 보약, 죽과 구이로</p></div>
+        <div class="product"><div class="emoji">🍡</div><h3>오메기떡</h3><p>차조로 빚은 쫀득한 떡</p></div>
       </div>
-      <span class="tag">헤더</span>
-    </div>
+    </section>
 
-    <div class="row">
-      <div class="part tabs">
-        <span class="active">홈</span><span>내 취향</span><span>갤러리</span><span>연락처</span>
-      </div>
-      <span class="tag">탭</span>
-    </div>
+    <article id="story">
+      <h2>📖 제주 특산물 이야기</h2>
 
-    <div class="row">
-      <div class="part card">
-        <h3>🎓 제주대학교 홍보</h3>
-        <p>바다와 한라산이 품은 배움의 터전</p>
-        <div class="inner">
-          <div class="list">
-            <ol>
-              <li>푸른 바다와 한라산이 함께하는 곳, 제주대학교입니다.</li>
-              <li>제주의 자연 속에서 꿈을 키우는 국립대학입니다.</li>
-              <li>… (100줄 중 일부)</li>
-            </ol>
-          </div>
-          <span class="tag green">목록</span>
-        </div>
-      </div>
-      <span class="tag">카드</span>
-    </div>
+      <h3>🍊 햇살을 머금은 감귤</h3>
+      <p>따뜻한 기후와 화산토에서 자란 제주 감귤은 겨울철 대표 간식입니다. 노지 감귤은 늦가을부터 겨울까지 맛볼 수 있습니다.</p>
 
-    <div class="row">
-      <div class="part footer">© 2026 내 취향 카드 · 만든 사람: 이승우</div>
-      <span class="tag" style="background:#1f2937">푸터</span>
-    </div>
+      <h3>🌊 바다가 길러 낸 해산물</h3>
+      <p>해녀가 정성껏 채취한 전복, 소라, 성게는 제주 바다의 신선함을 그대로 전합니다.</p>
 
-    <div class="missing">
-      <h2>요청한 6가지 부품 점검</h2>
-      <table>
-        <tr><th>부품</th><th>index.html에 있나요?</th></tr>
-        <tr><td>헤더</td><td class="yes">있음 (상단 파란 영역)</td></tr>
-        <tr><td>카드</td><td class="yes">있음 (본문의 흰색 카드)</td></tr>
-        <tr><td>버튼</td><td class="no">없음 (카운터를 지우면서 사라짐)</td></tr>
-        <tr><td>입력창</td><td class="no">없음</td></tr>
-        <tr><td>탭</td><td class="yes">있음 (홈·내 취향·갤러리·연락처 메뉴)</td></tr>
-        <tr><td>목록</td><td class="yes">있음 (홍보 문구 100줄 번호 목록)</td></tr>
-      </table>
-    </div>
+      <h3>🐖 제주의 자랑, 흑돼지</h3>
+      <p>멜젓에 콕 찍어 먹는 흑돼지구이는 제주 여행의 빼놓을 수 없는 즐거움입니다.</p>
+
+      <h3>✨ 이런 분께 추천해요</h3>
+      <ul>
+        <li>가족과 함께 제주의 맛을 나누고 싶은 분</li>
+        <li>정성 가득한 선물을 찾는 분</li>
+        <li>제주 여행의 추억을 이어 가고 싶은 분</li>
+      </ul>
+    </article>
+
+    <aside id="season">
+      <h2>📅 제철 달력</h2>
+      <ul>
+        <li><span class="badge">봄</span>한라봉 · 녹차</li>
+        <li><span class="badge">여름</span>한치 · 자리돔</li>
+        <li><span class="badge">가을</span>갈치 · 조생 감귤</li>
+        <li><span class="badge">겨울</span>노지 감귤 · 천혜향</li>
+      </ul>
+
+      <h2>🎁 추천 선물</h2>
+      <ul>
+        <li>🍊 감귤 선물 세트</li>
+        <li>🍵 녹차 티 세트</li>
+        <li>🍫 감귤 초콜릿</li>
+        <li>🍯 제주 꿀</li>
+      </ul>
+
+      <h2>💡 구매 팁</h2>
+      <ul>
+        <li>제철 시기를 확인하세요.</li>
+        <li>산지 직송인지 살펴보세요.</li>
+        <li>신선 식품은 받는 즉시 보관하세요.</li>
+      </ul>
+    </aside>
+
   </div>
+
+  <footer id="contact">
+    <p>🍊 제주 특산물 장터</p>
+    <p>문의: 전화번호와 이메일은 준비 중입니다.</p>
+    <p>© 2026 제주 특산물 장터. All rights reserved.</p>
+  </footer>
+
 </body>
 </html>
