@@ -27,18 +27,26 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const upstream = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents,
-        }),
-      }
-    );
-    const data = await upstream.json();
+    // 일시적 과부하(429/500/503)는 잠깐 쉬었다가 최대 3번까지 다시 시도합니다.
+    let upstream, data;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      // 한 번의 호출이 15초를 넘으면 끊고 (무한 대기 방지)
+      upstream = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+            contents,
+          }),
+          signal: AbortSignal.timeout(15000),
+        }
+      );
+      data = await upstream.json();
+      if (![429, 500, 503].includes(upstream.status)) break;
+      if (attempt < 1) await new Promise(r => setTimeout(r, 1000));
+    }
     if (!upstream.ok) {
       const msg = (data.error && data.error.message) || `Gemini 오류 ${upstream.status}`;
       return res.status(upstream.status).json({ error: msg });
@@ -48,6 +56,9 @@ module.exports = async (req, res) => {
     const reply = (parts || []).map(p => p.text || "").join("").trim();
     return res.status(200).json({ reply: reply || "답변을 만들지 못했어요. 다시 물어봐 주세요." });
   } catch (e) {
+    if (e && (e.name === "TimeoutError" || e.name === "AbortError")) {
+      return res.status(504).json({ error: "Gemini 응답이 너무 오래 걸려요. 잠시 후 다시 시도해 주세요." });
+    }
     return res.status(502).json({ error: "Gemini 호출에 실패했습니다." });
   }
 };

@@ -98,7 +98,8 @@
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history })
+          body: JSON.stringify({ messages: history }),
+          signal: AbortSignal.timeout(45000)
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "오류 " + res.status);
@@ -108,7 +109,8 @@
       } catch (err) {
         wait.remove();
         history.pop();   // 실패한 질문은 기록에서 제외
-        addBubble("⚠️ " + err.message, "agent");
+        const slow = err.name === "TimeoutError" || err.name === "AbortError";
+        addBubble("⚠️ " + (slow ? "응답이 너무 오래 걸려요. 잠시 후 다시 시도해 주세요." : err.message), "agent");
       } finally {
         sendBtn.disabled = false;
         input.focus();
