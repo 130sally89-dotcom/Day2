@@ -1,5 +1,5 @@
 // Vercel 서버리스 함수: 환경변수 GEMINI_API_KEY 로 Gemini를 호출합니다. 키는 브라우저에 노출되지 않습니다.
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
 const SYSTEM_PROMPT =
   "당신은 제주도 특산물(감귤, 한라봉, 흑돼지, 갈치, 옥돔, 녹차, 전복 등)을 소개하는 친절한 한국어 에이전트입니다. " +
