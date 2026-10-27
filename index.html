@@ -243,7 +243,13 @@
   <script>
     // 이미지는 /api/pixabay (Vercel 서버리스 함수)를 통해 받아옵니다. API Key는 서버 환경변수에만 있습니다.
     const $ = id => document.getElementById(id);
-    let images = [], idx = 0, page = 1, query = "";
+    let images = [], idx = 0, page = 1, query = "", timer = null;
+
+    // 검색 후 0.5초마다 다음 이미지로 자동 슬라이드
+    function startAuto() {
+      clearInterval(timer);
+      timer = setInterval(() => show(idx + 1), 500);
+    }
 
     function show(i) {
       idx = (i + images.length) % images.length;
@@ -269,14 +275,16 @@
           const t = document.createElement("img");
           t.src = img.previewURL;
           t.alt = img.tags;
-          t.onclick = () => show(n);
+          t.onclick = () => { show(n); startAuto(); };
           $("thumbs").appendChild(t);
         });
         $("slider").style.display = "block";
         $("more").style.display = "block";
         $("msg").textContent = `"${query}" ${page}페이지 (총 ${data.totalHits}개 중)`;
         show(0);
+        startAuto();
       } catch (e) {
+        clearInterval(timer);
         $("msg").textContent = e.message;
       }
     }
@@ -287,13 +295,13 @@
       page = 1;
       load();
     });
-    $("prev").onclick = () => show(idx - 1);
-    $("next").onclick = () => show(idx + 1);
+    $("prev").onclick = () => { show(idx - 1); startAuto(); };
+    $("next").onclick = () => { show(idx + 1); startAuto(); };
     $("more").onclick = () => { page++; load(); };
     document.addEventListener("keydown", e => {
       if (!images.length || e.target.tagName === "INPUT") return;
-      if (e.key === "ArrowLeft") show(idx - 1);
-      if (e.key === "ArrowRight") show(idx + 1);
+      if (e.key === "ArrowLeft") { show(idx - 1); startAuto(); }
+      if (e.key === "ArrowRight") { show(idx + 1); startAuto(); }
     });
 
     query = $("q").value.trim();
